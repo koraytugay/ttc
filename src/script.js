@@ -1,0 +1,108 @@
+// noinspection JSIgnoredPromiseFromCall
+
+// https://www.ttc.ca/ttcapi/routedetail/schedule?route=74&direction=0&stopCode=5518
+// [{"nextBusMinutes":"8","crowdingIndex":"1"},{"nextBusMinutes":"27","crowdingIndex":"2"}]
+
+const baseUrl = "https://www.ttc.ca/ttcapi/routedetail";
+
+// northbound
+const stClairStationAtLowerPlatform = 14819
+const mtPleasantRdatBlythwoodRd = 5804;
+
+// southbound
+const doncliffeLoopAtGlenEchoRd = 5518;
+const mtPleasantRdAtStibbardAve = 5846;
+
+populateNextBus(stClairStationAtLowerPlatform, "nb-stClairStationAtLowerPlatform-nextbus");
+populateSchedule(stClairStationAtLowerPlatform, "nb-stClairStationAtLowerPlatform-schedule", "1");
+
+populateNextBus(mtPleasantRdatBlythwoodRd, "nb-mtPleasantRdatBlythwoodRd-nextbus");
+populateSchedule(mtPleasantRdatBlythwoodRd, "nb-mtPleasantRdatBlythwoodRd-schedule", "1");
+
+populateNextBus(doncliffeLoopAtGlenEchoRd, "sb-doncliffeLoopAtGlenEchoRd-nextbus");
+populateSchedule(doncliffeLoopAtGlenEchoRd, "sb-doncliffeLoopAtGlenEchoRd-schedule", "0");
+
+populateNextBus(mtPleasantRdAtStibbardAve, "sb-mtPleasantRdAtStibbardAve-nextbus");
+populateSchedule(mtPleasantRdAtStibbardAve, "sb-mtPleasantRdAtStibbardAve-schedule", "0");
+
+async function populateNextBus(stopCode, elementId) {
+  const response = await fetch(baseUrl + '/GetNextBuses?routeId=74&stopCode=' + stopCode);
+  const nextBusInfo = await response.json();
+  const div = document.getElementById(elementId);
+
+  let nextBusMinutesArr = [];
+
+  for (let nextBus of nextBusInfo) {
+    if (nextBus.nextBusMinutes === 'D') {
+      nextBusMinutesArr.push('Delayed');
+    }
+    else if (nextBus.nextBusMinutes === '0') {
+      nextBusMinutesArr.push('Due');
+    }
+    else {
+      nextBusMinutesArr.push(nextBus.nextBusMinutes);
+    }
+  }
+  if (nextBusMinutesArr.length === 1) {
+    div.innerText = 'Next bus in: ' + nextBusMinutesArr[0] + ' minutes';
+  }
+  else {
+    div.innerText = 'Next bus in: ' + nextBusMinutesArr[0] + ' and in ' + nextBusMinutesArr[1] + ' minutes';
+  }
+}
+
+async function populateSchedule(stopCode, elementId, direction) {
+  const response = await fetch(baseUrl + "/schedule?route=74&direction=" + direction + "&stopCode=" + stopCode);
+  const schedule = (await response.json())["74A"];
+
+  let dailySchedule;
+
+  let currentDay = getCurrentDay();
+  if (currentDay === 'Sunday') {
+    dailySchedule = schedule[2].schedule;
+  }
+  else if (currentDay === 'Saturday') {
+    dailySchedule = schedule[1].schedule;
+  } else {
+    dailySchedule = schedule[0].schedule;
+  }
+
+  let currentTime = getCurrentTime();
+  let times = [];
+  for (let i = 0; i < dailySchedule.length; i++) {
+    if (dailySchedule[i].label === currentTime) {
+      times.push(...dailySchedule[i].stopTimes);
+      times.push(...dailySchedule[i + 1].stopTimes);
+    }
+  }
+
+  let scheduleDiv = document.getElementById(elementId);
+  scheduleDiv.innerText = times.join(" ")
+  console.log(times);
+}
+
+async function southBoundGlenEchoRd() {
+  await populateNextBus(doncliffeLoopAtGlenEchoRd, "southbound-glenecho-nextbus");
+}
+
+async function southBoundStibbardAve() {
+  await populateNextBus(5846, "southbound-stibbardAve");
+}
+
+function getCurrentTime() {
+  return new Date().toLocaleString('en-US', {hour: 'numeric', hour12: true});
+}
+
+function amPm() {
+  return new Date().toLocaleString('en-US', {hour: 'numeric', hour12: true}).substring(2);
+}
+
+function getCurrentDay() {
+  return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date().getDay()];
+}
+
+southBoundGlenEchoRd();
+southBoundStibbardAve();
+
+document.getElementById("currentTime").innerText = new Date().toLocaleString('en-US',
+    {hour: 'numeric', minute: 'numeric', hour12: true});
