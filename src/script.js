@@ -53,7 +53,7 @@ async function populateNextBus(stopCode, elementId) {
 
 async function populateSchedule(stopCode, elementId, direction) {
   const response = await fetch(baseUrl + "/schedule?route=74&direction=" + direction + "&stopCode=" + stopCode);
-  const schedule = (await response.json())["74A"];
+  const schedule = (await response.json())["74"];
 
   let dailySchedule;
 
@@ -78,15 +78,6 @@ async function populateSchedule(stopCode, elementId, direction) {
 
   let scheduleDiv = document.getElementById(elementId);
   scheduleDiv.innerText = times.join(" ")
-  console.log(times);
-}
-
-async function southBoundGlenEchoRd() {
-  await populateNextBus(doncliffeLoopAtGlenEchoRd, "southbound-glenecho-nextbus");
-}
-
-async function southBoundStibbardAve() {
-  await populateNextBus(5846, "southbound-stibbardAve");
 }
 
 function getCurrentTime() {
@@ -100,9 +91,6 @@ function amPm() {
 function getCurrentDay() {
   return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date().getDay()];
 }
-
-southBoundGlenEchoRd();
-southBoundStibbardAve();
 
 document.getElementById("currentTime").innerText = new Date().toLocaleString('en-US',
     {hour: 'numeric', minute: 'numeric', hour12: true});
