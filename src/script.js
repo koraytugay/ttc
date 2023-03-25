@@ -53,7 +53,7 @@ async function populateNextBus(stopCode, elementId) {
 
 async function populateSchedule(stopCode, elementId, direction) {
   const response = await fetch(baseUrl + "/schedule?route=74&direction=" + direction + "&stopCode=" + stopCode);
-  const schedule = (await response.json())["74"];
+  const schedule = (await response.json())["74A"];
 
   let dailySchedule;
 
@@ -82,10 +82,6 @@ async function populateSchedule(stopCode, elementId, direction) {
 
 function getCurrentTime() {
   return new Date().toLocaleString('en-US', {hour: 'numeric', hour12: true});
-}
-
-function amPm() {
-  return new Date().toLocaleString('en-US', {hour: 'numeric', hour12: true}).substring(2);
 }
 
 function getCurrentDay() {
