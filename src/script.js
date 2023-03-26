@@ -44,7 +44,7 @@ async function populateNextBus(stopCode, elementId) {
     }
   }
   let htmlSpanElement = document.createElement("span");
-  htmlSpanElement.innerText = "Next bus is in: ";
+  htmlSpanElement.innerText = "Next bus is in ";
   nextBusInDiv.appendChild(htmlSpanElement);
 
   htmlSpanElement = document.createElement("span");
