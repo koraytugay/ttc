@@ -28,7 +28,7 @@ populateSchedule(mtPleasantRdAtStibbardAve, "sb-mtPleasantRdAtStibbardAve-schedu
 async function populateNextBus(stopCode, elementId) {
   const response = await fetch(baseUrl + '/GetNextBuses?routeId=74&stopCode=' + stopCode);
   const nextBusInfo = await response.json();
-  const div = document.getElementById(elementId);
+  const nextBusInDiv = document.getElementById(elementId);
 
   let nextBusMinutesArr = [];
 
@@ -43,11 +43,37 @@ async function populateNextBus(stopCode, elementId) {
       nextBusMinutesArr.push(nextBus.nextBusMinutes);
     }
   }
+  let htmlSpanElement = document.createElement("span");
+  htmlSpanElement.innerText = "Next bus is in: ";
+  nextBusInDiv.appendChild(htmlSpanElement);
+
+  htmlSpanElement = document.createElement("span");
+  htmlSpanElement.classList.add("minutes");
+  htmlSpanElement.innerText = nextBusMinutesArr[0];
+  nextBusInDiv.appendChild(htmlSpanElement);
+
   if (nextBusMinutesArr.length === 1) {
-    div.innerText = 'Next bus in: ' + nextBusMinutesArr[0] + ' minutes';
+    htmlSpanElement = document.createElement("span");
+    htmlSpanElement.innerText = " minutes."
+    nextBusInDiv.appendChild(htmlSpanElement);
   }
   else {
-    div.innerText = 'Next bus in: ' + nextBusMinutesArr[0] + ' and in ' + nextBusMinutesArr[1] + ' minutes';
+    htmlSpanElement = document.createElement("span");
+    htmlSpanElement.innerText = " minutes"
+    nextBusInDiv.appendChild(htmlSpanElement);
+
+    htmlSpanElement = document.createElement("span");
+    htmlSpanElement.innerText = " and in "
+    nextBusInDiv.appendChild(htmlSpanElement);
+
+    htmlSpanElement = document.createElement("span");
+    htmlSpanElement.classList.add("minutes");
+    htmlSpanElement.innerText = nextBusMinutesArr[1];
+    nextBusInDiv.appendChild(htmlSpanElement);
+
+    htmlSpanElement = document.createElement("span");
+    htmlSpanElement.innerText = " minutes."
+    nextBusInDiv.appendChild(htmlSpanElement);
   }
 }
 
@@ -77,7 +103,17 @@ async function populateSchedule(stopCode, elementId, direction) {
   }
 
   let scheduleDiv = document.getElementById(elementId);
-  scheduleDiv.innerText = times.join(" ")
+
+  let counter = 0
+  for (let time of times) {
+    if (counter === 4) {
+      break;
+    }
+    let htmlTableCellElement = document.createElement("td");
+    htmlTableCellElement.innerText = time;
+    scheduleDiv.append(htmlTableCellElement);
+    counter++;
+  }
 }
 
 function getCurrentTime() {
