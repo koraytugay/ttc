@@ -6,7 +6,7 @@
 const baseUrl = "https://www.ttc.ca/ttcapi/routedetail";
 
 // northbound
-const stClairStationAtLowerPlatform = 14819
+const stClairStationAtLowerPlatform = 15306;
 const mtPleasantRdatBlythwoodRd = 5804;
 
 // southbound
