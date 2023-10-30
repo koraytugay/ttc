@@ -13,22 +13,28 @@ const mtPleasantRdatBlythwoodRd = 5804;
 const doncliffeLoopAtGlenEchoRd = 5518;
 const mtPleasantRdAtStibbardAve = 5846;
 
-populateNextBus(stClairStationAtLowerPlatform, "nb-stClairStationAtLowerPlatform-nextbus");
-populateSchedule(stClairStationAtLowerPlatform, "nb-stClairStationAtLowerPlatform-schedule", "1");
+function refreshUi() {
+  document.getElementById("currentTime").innerText = new Date().toLocaleString('en-US',
+    {hour: 'numeric', minute: 'numeric', hour12: true});
 
-populateNextBus(mtPleasantRdatBlythwoodRd, "nb-mtPleasantRdatBlythwoodRd-nextbus");
-populateSchedule(mtPleasantRdatBlythwoodRd, "nb-mtPleasantRdatBlythwoodRd-schedule", "1");
-
-populateNextBus(doncliffeLoopAtGlenEchoRd, "sb-doncliffeLoopAtGlenEchoRd-nextbus");
-populateSchedule(doncliffeLoopAtGlenEchoRd, "sb-doncliffeLoopAtGlenEchoRd-schedule", "0");
-
-populateNextBus(mtPleasantRdAtStibbardAve, "sb-mtPleasantRdAtStibbardAve-nextbus");
-populateSchedule(mtPleasantRdAtStibbardAve, "sb-mtPleasantRdAtStibbardAve-schedule", "0");
+  populateNextBus(stClairStationAtLowerPlatform, "nb-stClairStationAtLowerPlatform-nextbus");
+  populateSchedule(stClairStationAtLowerPlatform, "nb-stClairStationAtLowerPlatform-schedule", "1");
+  
+  populateNextBus(mtPleasantRdatBlythwoodRd, "nb-mtPleasantRdatBlythwoodRd-nextbus");
+  populateSchedule(mtPleasantRdatBlythwoodRd, "nb-mtPleasantRdatBlythwoodRd-schedule", "1");
+  
+  populateNextBus(doncliffeLoopAtGlenEchoRd, "sb-doncliffeLoopAtGlenEchoRd-nextbus");
+  populateSchedule(doncliffeLoopAtGlenEchoRd, "sb-doncliffeLoopAtGlenEchoRd-schedule", "0");
+  
+  populateNextBus(mtPleasantRdAtStibbardAve, "sb-mtPleasantRdAtStibbardAve-nextbus");
+  populateSchedule(mtPleasantRdAtStibbardAve, "sb-mtPleasantRdAtStibbardAve-schedule", "0");
+}
 
 async function populateNextBus(stopCode, elementId) {
   const response = await fetch(baseUrl + '/GetNextBuses?routeId=74&stopCode=' + stopCode);
   const nextBusInfo = await response.json();
   const nextBusInDiv = document.getElementById(elementId);
+  nextBusInDiv.innerHTML = '';
 
   let nextBusMinutesArr = [];
 
@@ -103,6 +109,7 @@ async function populateSchedule(stopCode, elementId, direction) {
   }
 
   let scheduleDiv = document.getElementById(elementId);
+  scheduleDiv.innerHTML = '';
 
   let counter = 0
   for (let time of times) {
@@ -124,5 +131,11 @@ function getCurrentDay() {
   return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date().getDay()];
 }
 
-document.getElementById("currentTime").innerText = new Date().toLocaleString('en-US',
-    {hour: 'numeric', minute: 'numeric', hour12: true});
+refreshUi();
+
+setInterval(() => {
+  console.log(new Date().getSeconds());
+  if (new Date().getSeconds() == 0) {
+    refreshUi();
+  }
+}, 1000);
