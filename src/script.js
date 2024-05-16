@@ -134,7 +134,6 @@ function getCurrentDay() {
 refreshUi();
 
 setInterval(() => {
-  console.log(new Date().getSeconds());
   if (new Date().getSeconds() == 0) {
     refreshUi();
   }
