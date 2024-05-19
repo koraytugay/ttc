@@ -7,10 +7,12 @@ const baseUrl = "https://www.ttc.ca/ttcapi/routedetail";
 
 // northbound
 const stClairStationAtLowerPlatform = 15306;
+const mtPleasantRdAtEglintonAveEastNorthSide = 5813;
 const mtPleasantRdatBlythwoodRd = 5804;
 
 // southbound
 const doncliffeLoopAtGlenEchoRd = 5518;
+const mtPleasantRdAtLawrenceAveEastSouthSide = 5827
 const mtPleasantRdAtStibbardAve = 5846;
 
 function refreshUi() {
@@ -19,13 +21,19 @@ function refreshUi() {
 
   populateNextBus(stClairStationAtLowerPlatform, "nb-stClairStationAtLowerPlatform-nextbus");
   populateSchedule(stClairStationAtLowerPlatform, "nb-stClairStationAtLowerPlatform-schedule", "1");
-  
+
+  populateNextBus(mtPleasantRdAtEglintonAveEastNorthSide, "nb-mtPleasantRdAtEglintonAveEastNorthSide-nextbus");
+  populateSchedule(mtPleasantRdAtEglintonAveEastNorthSide, "nb-mtPleasantRdAtEglintonAveEastNorthSide-schedule", "1");
+
   populateNextBus(mtPleasantRdatBlythwoodRd, "nb-mtPleasantRdatBlythwoodRd-nextbus");
   populateSchedule(mtPleasantRdatBlythwoodRd, "nb-mtPleasantRdatBlythwoodRd-schedule", "1");
-  
+
   populateNextBus(doncliffeLoopAtGlenEchoRd, "sb-doncliffeLoopAtGlenEchoRd-nextbus");
   populateSchedule(doncliffeLoopAtGlenEchoRd, "sb-doncliffeLoopAtGlenEchoRd-schedule", "0");
-  
+
+  populateNextBus(mtPleasantRdAtLawrenceAveEastSouthSide, "sb-mtPleasantRdAtLawrenceAveEastSouthSide-nextbus");
+  populateSchedule(mtPleasantRdAtLawrenceAveEastSouthSide, "sb-mtPleasantRdAtLawrenceAveEastSouthSide-schedule", "0");
+
   populateNextBus(mtPleasantRdAtStibbardAve, "sb-mtPleasantRdAtStibbardAve-nextbus");
   populateSchedule(mtPleasantRdAtStibbardAve, "sb-mtPleasantRdAtStibbardAve-schedule", "0");
 }
