@@ -93,7 +93,11 @@ async function populateNextBus(stopCode, elementId) {
 
 async function populateSchedule(stopCode, elementId, direction) {
   const response = await fetch(baseUrl + "/schedule?route=74&direction=" + direction + "&stopCode=" + stopCode);
-  const schedule = (await response.json())["74A"];
+  const responseData = (await response.json());
+  let schedule = responseData["74A"];
+  if (!schedule) {
+    schedule = responseData["74"];
+  }
 
   let dailySchedule;
 
