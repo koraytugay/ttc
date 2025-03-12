@@ -106,7 +106,8 @@ async function populateSchedule(stopCode, elementId, direction) {
   }
   else if (currentDay === 'Saturday') {
     dailySchedule = schedule[1].schedule;
-  } else {
+  }
+  else {
     dailySchedule = schedule[0].schedule;
   }
 
@@ -129,18 +130,23 @@ async function populateSchedule(stopCode, elementId, direction) {
   }
 
   let currentTime = getCurrentTime();
+  let firstTime = [];
   let times = [];
 
   for (let i = 0; i < allScheduledTimes.length; i++) {
-    let isFirstNext = true;
     if (compareTimes(allScheduledTimes[i], currentTime) >= 0) {
-      if (isFirstNext) {
-        times.push(allScheduledTimes[i - 1]);
-        isFirstNext = false;
-      }
+      firstTime.push(allScheduledTimes[i - 1]);
+      break;
+    }
+  }
+
+  for (let i = 0; i < allScheduledTimes.length; i++) {
+    if (compareTimes(allScheduledTimes[i], currentTime) >= 0) {
       times.push(allScheduledTimes[i]);
     }
   }
+
+  times = [...firstTime, ...times];
 
   let scheduleDiv = document.getElementById(elementId);
   scheduleDiv.innerHTML = '';
