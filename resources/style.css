@@ -59,3 +59,11 @@ td {
   color: ivory;
   padding-right: 10px;
 }
+
+.missed {
+  background: lightpink;
+}
+
+.next {
+  background: lightgreen;
+}

@@ -16,8 +16,7 @@ const mtPleasantRdAtLawrenceAveEastSouthSide = 5827
 const mtPleasantRdAtStibbardAve = 5846;
 
 function refreshUi() {
-  document.getElementById("currentTime").innerText = new Date().toLocaleString('en-US',
-    {hour: 'numeric', minute: 'numeric', hour12: true});
+  document.getElementById("currentTime").innerText = getCurrentTime();
 
   populateNextBus(stClairStationAtLowerPlatform, "nb-stClairStationAtLowerPlatform-nextbus");
   populateSchedule(stClairStationAtLowerPlatform, "nb-stClairStationAtLowerPlatform-schedule", "1");
@@ -111,12 +110,35 @@ async function populateSchedule(stopCode, elementId, direction) {
     dailySchedule = schedule[0].schedule;
   }
 
+  for (let i = 0; i < dailySchedule.length; i++) {
+    if (!dailySchedule[i].label.startsWith('12') && dailySchedule[i].label.endsWith('PM')) {
+      for (let j = 0; j < dailySchedule[i].stopTimes.length; j++) {
+        let hours = dailySchedule[i].stopTimes[j].split(":")[0];
+        let minutes = dailySchedule[i].stopTimes[j].split(":")[1];
+        hours = 12 + parseInt(hours);
+        dailySchedule[i].stopTimes[j] = `${hours}:${minutes}`;
+      }
+    }
+  }
+
+  let allScheduledTimes = [];
+  for (let i = 0; i < dailySchedule.length; i++) {
+    for (let j = 0; j < dailySchedule[i].stopTimes.length; j++) {
+      allScheduledTimes.push(dailySchedule[i].stopTimes[j]);
+    }
+  }
+
   let currentTime = getCurrentTime();
   let times = [];
-  for (let i = 0; i < dailySchedule.length; i++) {
-    if (dailySchedule[i].label === currentTime) {
-      times.push(...dailySchedule[i].stopTimes);
-      times.push(...dailySchedule[i + 1].stopTimes);
+
+  for (let i = 0; i < allScheduledTimes.length; i++) {
+    let isFirstNext = true;
+    if (compareTimes(allScheduledTimes[i], currentTime) >= 0) {
+      if (isFirstNext) {
+        times.push(allScheduledTimes[i - 1]);
+        isFirstNext = false;
+      }
+      times.push(allScheduledTimes[i]);
     }
   }
 
@@ -125,18 +147,32 @@ async function populateSchedule(stopCode, elementId, direction) {
 
   let counter = 0
   for (let time of times) {
-    if (counter === 4) {
+    if (counter === 5) {
       break;
     }
     let htmlTableCellElement = document.createElement("td");
     htmlTableCellElement.innerText = time;
+    if (counter === 0) {
+      htmlTableCellElement.classList.add('missed');
+    }
+    if (counter === 1) {
+      htmlTableCellElement.classList.add('next');
+    }
     scheduleDiv.append(htmlTableCellElement);
     counter++;
   }
 }
 
+function compareTimes(t1, t2) {
+  const [h1, m1] = t1.split(':').map(Number);
+  const [h2, m2] = t2.split(':').map(Number);
+
+  if (h1 !== h2) return h1 - h2;  // Compare hours first
+  return m1 - m2;                 // Compare minutes if hours are the same
+}
+
 function getCurrentTime() {
-  return new Date().toLocaleString('en-US', {hour: 'numeric', hour12: true});
+  return new Date().toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: false});
 }
 
 function getCurrentDay() {
